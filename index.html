@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Breathing Box - Mindful Breathing Exercise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .breathing-box {
+            width: 200px;
+            height: 200px;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            transition: transform 4s ease-in-out, background-color 4s ease-in-out;
+        }
+
+        .breathing-box.inhale {
+            transform: scale(1.2);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .breathing-box.hold {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .breathing-box.exhale {
+            transform: scale(1);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .breathing-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 100%);
+            transition: transform 4s ease-in-out, opacity 4s ease-in-out;
+        }
+
+        .breathing-box.inhale .breathing-circle {
+            transform: scale(1.5);
+            opacity: 1;
+        }
+
+        .breathing-box.exhale .breathing-circle {
+            transform: scale(1);
+            opacity: 0.7;
+        }
+
+        .instruction {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 20px 0;
+            min-height: 50px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .timer {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-pause {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .mindful-quote {
+            margin-top: 40px;
+            font-style: italic;
+            opacity: 0.85;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        .cycle-counter {
+            margin-top: 15px;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .info-text {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            max-width: 450px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .breathing-box {
+                width: 160px;
+                height: 160px;
+            }
+
+            .breathing-circle {
+                width: 80px;
+                height: 80px;
+            }
+
+            .instruction {
+                font-size: 1.4rem;
+            }
+
+            .timer {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧘 Zen Breathing Box</h1>
+        <p class="subtitle">Find your inner peace with mindful breathing</p>
+
+        <div class="breathing-box" id="breathingBox">
+            <div class="breathing-circle"></div>
+        </div>
+
+        <div class="instruction" id="instruction">Press Start to begin</div>
+        <div class="timer" id="timer">4</div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn" onclick="startBreathing()">Start</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pauseBreathing()" style="display: none;">Pause</button>
+            <button class="btn btn-reset" id="resetBtn" onclick="resetBreathing()">Reset</button>
+        </div>
+
+        <div class="cycle-counter" id="cycleCounter">Completed cycles: 0</div>
+
+        <p class="mindful-quote" id="quote">"Breathing in, I calm my body. Breathing out, I smile." — Thich Nhat Hanh</p>
+
+        <p class="info-text">
+            Box breathing (4-4-4-4): Inhale for 4 seconds, hold for 4 seconds, 
+            exhale for 4 seconds, hold for 4 seconds. This technique helps reduce stress 
+            and promotes relaxation.
+        </p>
+    </div>
+
+    <script>
+        const breathingBox = document.getElementById('breathingBox');
+        const instruction = document.getElementById('instruction');
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const cycleCounter = document.getElementById('cycleCounter');
+        const quoteElement = document.getElementById('quote');
+
+        const phases = ['inhale', 'hold', 'exhale', 'hold'];
+        const phaseTexts = ['Breathe In...', 'Hold...', 'Breathe Out...', 'Hold...'];
+        const phaseDuration = 4; // seconds per phase
+
+        let currentPhase = 0;
+        let timeRemaining = phaseDuration;
+        let isRunning = false;
+        let intervalId = null;
+        let completedCycles = 0;
+
+        const quotes = [
+            '"Breathing in, I calm my body. Breathing out, I smile." — Thich Nhat Hanh',
+            '"The present moment is filled with joy and happiness. If you are attentive, you will see it." — Thich Nhat Hanh',
+            '"Peace comes from within. Do not seek it without." — Buddha',
+            '"Be where you are, not where you think you should be." — Unknown',
+            '"In the midst of movement and chaos, keep stillness inside of you." — Deepak Chopra',
+            '"Feelings come and go like clouds in a windy sky. Conscious breathing is my anchor." — Thich Nhat Hanh',
+            '"The quieter you become, the more you can hear." — Ram Dass',
+            '"Breath is the bridge which connects life to consciousness." — Thich Nhat Hanh'
+        ];
+
+        function updateDisplay() {
+            timerDisplay.textContent = timeRemaining;
+            instruction.textContent = phaseTexts[currentPhase];
+
+            // Remove all phase classes first
+            breathingBox.classList.remove('inhale', 'hold', 'exhale');
+
+            // Add current phase class
+            if (phases[currentPhase] === 'inhale') {
+                breathingBox.classList.add('inhale');
+            } else if (phases[currentPhase] === 'exhale') {
+                breathingBox.classList.add('exhale');
+            } else {
+                breathingBox.classList.add('hold');
+            }
+        }
+
+        function tick() {
+            timeRemaining--;
+
+            if (timeRemaining < 0) {
+                currentPhase = (currentPhase + 1) % phases.length;
+                timeRemaining = phaseDuration;
+
+                // Increment cycle counter when we complete all 4 phases
+                if (currentPhase === 0) {
+                    completedCycles++;
+                    cycleCounter.textContent = `Completed cycles: ${completedCycles}`;
+                    // Change quote every cycle
+                    quoteElement.textContent = quotes[completedCycles % quotes.length];
+                }
+            }
+
+            updateDisplay();
+        }
+
+        function startBreathing() {
+            if (!isRunning) {
+                isRunning = true;
+                startBtn.style.display = 'none';
+                pauseBtn.style.display = 'inline-block';
+                updateDisplay();
+                intervalId = setInterval(tick, 1000);
+            }
+        }
+
+        function pauseBreathing() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(intervalId);
+                startBtn.style.display = 'inline-block';
+                startBtn.textContent = 'Resume';
+                pauseBtn.style.display = 'none';
+                instruction.textContent = 'Paused - Take your time';
+            }
+        }
+
+        function resetBreathing() {
+            isRunning = false;
+            clearInterval(intervalId);
+            currentPhase = 0;
+            timeRemaining = phaseDuration;
+            completedCycles = 0;
+
+            breathingBox.classList.remove('inhale', 'hold', 'exhale');
+            instruction.textContent = 'Press Start to begin';
+            timerDisplay.textContent = phaseDuration;
+            cycleCounter.textContent = 'Completed cycles: 0';
+            quoteElement.textContent = quotes[0];
+
+            startBtn.style.display = 'inline-block';
+            startBtn.textContent = 'Start';
+            pauseBtn.style.display = 'none';
+        }
+
+        // Initialize display
+        timerDisplay.textContent = phaseDuration;
+    </script>
+</body>
+</html>
